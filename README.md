@@ -432,3 +432,34 @@ tz/
 - Нужны валидные Telethon `.session` файлы для каждого аккаунта.
 - `TELEGRAM_API_ID` / `TELEGRAM_API_HASH` — с https://my.telegram.org
 - Для prod: Windows VPS 24/7, `serve` + `listener` в двух процессах (или через systemd/Task Scheduler).
+
+---
+
+## Для проверки (фаундер / ревьюер)
+
+**В GitHub только код** — секреты не коммитятся (`.env` в `.gitignore`).
+
+```powershell
+git clone https://github.com/sariksaliev/newsletter.git
+cd newsletter
+copy .env.example .env
+# Заполнить .env своими ключами (или получить у автора отдельно, не из Git)
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python run.py seed
+python run.py serve
+```
+
+Проверка **без** реальных Telegram-аккаунтов:
+
+| Что проверить | Как |
+|---------------|-----|
+| API жив | http://localhost:8000/api/health |
+| Swagger / эндпоинты | http://localhost:8000/docs |
+| Дашборд воронки | http://localhost:8000 |
+| Smoke-тест | `python run.py test` (нужны `SALES_TELEGRAM_*`) |
+| Блоки A–D | `src/services/` + таблица блоков в README |
+| KPI из ТЗ | `/api/accounts/mortality`, `/api/outreach/delivery-rate` |
+
+Полный E2E (рассылка, парсинг) — `.session` + прокси + ключи в `.env` (**передаются вне GitHub**).

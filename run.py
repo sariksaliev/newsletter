@@ -11,6 +11,7 @@ def main():
     sub.add_parser("serve", help="Start API server + scheduler")
     sub.add_parser("seed", help="Seed default config")
     sub.add_parser("listener", help="Start inbound message listener")
+    sub.add_parser("test", help="Run smoke tests (notify, API, dialog)")
 
     args = parser.parse_args()
 
@@ -23,6 +24,13 @@ def main():
     elif args.command == "listener":
         from src.workers.inbound_listener import run_listener
         asyncio.run(run_listener())
+    elif args.command == "test":
+        import sys
+        from pathlib import Path
+
+        sys.path.insert(0, str(Path(__file__).parent))
+        from scripts.smoke_test import main as test_main
+        raise SystemExit(asyncio.run(test_main()))
     else:
         parser.print_help()
 
